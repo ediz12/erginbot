@@ -32,7 +32,9 @@ class VerificationService(object):
 
     async def check_verification(self, channel, author, summoner_name, expected_verification):
         try:
-            verification_string = Summoner(name=summoner_name).verification_string
+            summoner = Summoner(name=summoner_name)
+            verification_string = summoner.verification_string
+            summoner_name = summoner.name
             if (expected_verification == verification_string):
                 await channel.send(self.command_texts["correctVerification"])
                 await self.discord_service.change_member_nickname(author, summoner_name)
