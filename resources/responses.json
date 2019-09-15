@@ -1,49 +1,4 @@
 {
-  "addFilterResultFalse": "'{0]' filtreye eklenirken bir hata oluştu.",
-  "addFilterResultTrue": "'{0}' başarıyla filtreye eklendi!",
-  "bans": {},
-  "filter_warns": [
-    "Oğlum napıyorsun ya? En azından bazıları gibi bilerek küfür etme.",
-    "Oğlum napıyorsun sen ya kafayı mı yedin sen?",
-    "İnsan gibi geçiniyorum, oyundan zevk alıyorum. Sen de dene bak.",
-    "Bak beni dinle oğlum oyunun çok basit bir mantığı var tamam mı? Arkadaşlarınla iyi geçiniyorsun önce tamam mı? İyi geçindiğin zaman onlarla daha rahat iletişim kurmaya başlayacaksın. Daha rahat iletişim kurunca daha rahat oynuyorsun abi. Bu kadar basit! Bu kadar basit ya! Bir kere denesene bir kere dene ya!"
-  ],
-  "filters": [
-    "amk",
-    "orospu",
-    "ibne",
-    "salak",
-    "sikerim",
-    "gerizekalı",
-    "aptal",
-    "kaka",
-    "penis",
-    "yarrak",
-    "piç",
-    "yavşak",
-    "şerefsiz",
-    "gavat",
-    "annesiz",
-    "yalak",
-    "siktiğim",
-    "sikik",
-    "sikerim",
-    "yavşak",
-    "dışkı",
-    "puşt",
-    "amına",
-    "ibne",
-    "göt",
-    "amımı",
-    "amk",
-    "mal",
-    "fuck",
-    "pussy",
-    "dick"
-  ],
-  "removeFilterResultFalse": "'{0}' filtreden silinirken bir hata oluştu. Bu kelime muhtemelen filtrede değil.",
-  "removeFilterResultTrue": "'{0}' başarıyla filtreden kaldırıldı!",
-  "responses": {
     "afk kal": [
       "Boş ver, poz ver, bir de AFKden ceza al!"
     ],
@@ -110,6 +65,4 @@
     "şifre": [
       "Abi napıyorsun ya? Vermesene şifreni kimseye, bahsetme bile."
     ]
-  },
-  "token": "MzAzNTQwNjM0NzIyMTA3NDAz.C9ZnIg.98zNrnJSAzV146rdzlHUd_8xWy8"
 }

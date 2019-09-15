@@ -1,0 +1,18 @@
+{
+  "prefix": "!",
+  "token": "DISCORD TOKEN HERE",
+  "guild_name": "oldies goldies",
+  "staff_role": "Admin",
+  "board_channel": "panolar",
+  "board_announcements_channel": "duyurular",
+  "board_announcements_role": "duyuru rolü",
+  "welcome_channel": "hoşgeldiniz",
+  "deleted_messages_channel": "silinen_mesajlar",
+  "logs_channel": "loglar",
+  "mod_logs_channel": "mod_logları",
+  "sanctions_channel": "verilen_cezalar",
+  "staff_channel": "ekip_sohbet",
+  "banned_role": "Cezalı",
+  "verified_role": "Sihirdar",
+  "riot_api_key": "RIOT API HERE"
+}
