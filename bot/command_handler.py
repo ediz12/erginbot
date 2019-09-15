@@ -134,6 +134,9 @@ class CommandHandler(object):
     def _cmd_destek(self, args):
         return "https://support.riotgames.com/hc/tr"
 
+    def _cmd_doan(self, args):
+        return "gel vs, tüm güçle alırım seni! item al gel full para dimi gel!  - doğan, 2019 https://www.youtube.com/watch?v=eoUn5toyZvY"
+
     def _cmd_onayyardim(self, args):
         return "\n\n".join([self.command_texts["verificationSteps"], self.command_texts["verificationPossibleError"]])
 
