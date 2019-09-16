@@ -30,34 +30,34 @@ class VerificationService(object):
     def generate_code(self):
         return "-".join([self.random_generator() for _ in range(5)])
 
-    async def check_verification(self, channel, author, summoner_name, expected_verification):
+    async def check_verification(self, guild, author, summoner_name, expected_verification):
         try:
             summoner = Summoner(name=summoner_name)
             verification_string = summoner.verification_string
             summoner_name = summoner.name
             if (expected_verification == verification_string):
-                await channel.send(self.command_texts["correctVerification"])
+                await author.send(self.command_texts["correctVerification"])
                 await self.discord_service.change_member_nickname(author, summoner_name)
-                await self.discord_service.give_role(channel.guild, author, self.settings["verified_role"])
+                await self.discord_service.give_role(guild, author, self.settings["verified_role"])
                 self.verify_pending.remove(author)
             else:
                 wrong_text = self.command_texts["wrongVerification"].format(verification_string, expected_verification)
-                await channel.send(wrong_text)
+                await author.send(wrong_text)
                 self.verify_pending.remove(author)
-                await self.wait_and_verify(channel, author, summoner_name, expected_verification)
+                await self.wait_and_verify(guild, author, summoner_name, expected_verification)
 
         except APIRequestError as e:
-            await channel.send(str(e))
+            await author.send(str(e))
             self.verify_pending.remove(author)
         except Exception as e:
-            await channel.send(self.command_texts["noVerification"].format(summoner_name) + " Sunucu ekibine iletmek için aldığınız hata: " + str(e))
+            await author.send(self.command_texts["noVerification"].format(summoner_name))
             self.verify_pending.remove(author)
-            await self.wait_and_verify(channel, author, summoner_name, expected_verification)
+            await self.wait_and_verify(author, author, summoner_name, expected_verification)
 
 
-    async def wait_and_verify(self, channel, author, summoner_name, expected_verification=None):
+    async def wait_and_verify(self, guild, author, summoner_name, expected_verification=None):
         if author in self.verify_pending:
-            await channel.send(self.command_texts["verificationAlreadyPending"])
+            await author.send(self.command_texts["verificationAlreadyPending"])
             return
 
         self.verify_pending.append(author)
@@ -66,7 +66,7 @@ class VerificationService(object):
             expected_verification = self.generate_code()
             verification_message = self.discord_service.create_embedded_verification(summoner_name, expected_verification)
             verification_help = "\n\n".join([self.command_texts["verificationSteps"], self.command_texts["verificationPossibleError"]])
-            await channel.send(verification_help, embed=verification_message)
+            await author.send(verification_help, embed=verification_message)
 
         def check(message):
             verified = "!onayladım"
@@ -76,10 +76,10 @@ class VerificationService(object):
         try:
             msg = await self.client.wait_for('message', check=check, timeout=300.0)
             if msg.content == "!iptal":
-                await channel.send(self.command_texts["verificationCancelled"])
+                await author.send(self.command_texts["verificationCancelled"])
                 self.verify_pending.remove(author)
             elif msg.content == "!onayladım":
-                await self.check_verification(channel, author, summoner_name, expected_verification)
+                await self.check_verification(guild, author, summoner_name, expected_verification)
         except asyncio.TimeoutError:
-            await channel.send(self.command_texts["verificationTimeout"].format(summoner_name))
+            await author.send(self.command_texts["verificationTimeout"].format(summoner_name))
             self.verify_pending.remove(author)
