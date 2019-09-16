@@ -87,7 +87,7 @@ class DiscordService(object):
         await member.add_roles(role)
 
     def inform_suspicious_message(self,user, channel, message_content):
-        text = "@everyone Uygunsuz mesaj şüphesi:\n\n %s - %s: %s" % (user.mention, channel.mention, message_content)
+        text = "Uygunsuz mesaj şüphesi:\n\n %s - %s: %s" % (user.mention, channel.mention, message_content)
         staff_channel = self.get_channel_id(self.settings["guild_name"], self.settings["staff_channel"])
 
         asyncio.get_event_loop().create_task(staff_channel.send(text))
