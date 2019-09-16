@@ -36,6 +36,11 @@ class CommandHandler(object):
         self.message_content = message.content
         self.client = client
         self.staff_role = self.discord_service.get_role_id(self.settings["guild_name"], self.settings["staff_role"])
+        self.banned_role = self.discord_service.get_role_id(self.settings["guild_name"], self.settings["banned_role"])
+        self.verified_role = self.discord_service.get_role_id(self.settings["guild_name"], self.settings["verified_role"])
+
+        if self.banned_role in self.author.roles:
+            return
 
         if self.message_content.startswith(self.settings["prefix"]):
             commands = self.message_content[1:].split()
@@ -54,7 +59,7 @@ class CommandHandler(object):
             return None
 
     def _cmd_addfilter(self, args):
-        if len(args) == 1:
+        if len(args) == 1 and self.staff_role in self.author.roles:
             keyword = args[0]
             result = self.filter_service.add_filter(keyword)
             if result:
@@ -64,7 +69,7 @@ class CommandHandler(object):
             return self.get_wrong_command_usage("badAddFilterCommand")
 
     def _cmd_removefilter(self, args):
-        if len(args) == 1:
+        if len(args) == 1 and self.staff_role in self.author.roles:
             keyword = args[0]
             result = self.filter_service.remove_filter(keyword)
             if result:
@@ -74,78 +79,89 @@ class CommandHandler(object):
             return self.get_wrong_command_usage("badRemoveFilterCommand")
 
     def _cmd_showfilter(self, args):
-        if len(self.filter_service.filters["filters"]) > 0:
+        if len(self.filter_service.filters["filters"]) > 0 and self.staff_role in self.author.roles:
             return ", ".join(self.filter_service.filters["filters"])
         else:
             return self.command_texts["emptyFilter"]
 
     def _cmd_lsfirstmembers(self, args):
-        return "\n".join(self.discord_service.list_first_members(self.guild))
+        if self.staff_role in self.author.roles:
+            return "\n".join(self.discord_service.list_first_members(self.guild))
 
     def _cmd_flipcoin(self, args):
-        self.discord_service.flip_coin(self.channel)
-        return None
+        if self.verified_role in self.author.roles:
+            self.discord_service.flip_coin(self.channel)
+            return None
 
     def _cmd_rafflemode(self, args):
-        return self.command_texts["raffleMode" + str(self.raffle_service.toggle_raffle_mode())]
+        if self.staff_role in self.author.roles:
+            return self.command_texts["raffleMode" + str(self.raffle_service.toggle_raffle_mode())]
 
     def _cmd_kelkodver(self, args):
-        result = self.raffle_service.add_participant(self.author.mention)
-        if result:
-            return self.command_texts["addedNewRaffleParticipant"].format(self.author.mention)
-        else:
-            return self.command_texts["participantAlreadyAdded"].format(self.author.mention)
+        if self.verified_role in self.author.roles:
+            result = self.raffle_service.add_participant(self.author.mention)
+            if result:
+                return self.command_texts["addedNewRaffleParticipant"].format(self.author.mention)
+            else:
+                return self.command_texts["participantAlreadyAdded"].format(self.author.mention)
 
     def _cmd_lsparticipants(self, args):
-        result = self.raffle_service.list_participants()
-        if len(result) == 0:
-            return self.command_texts["noParticipants"]
-        return ", ".join(self.raffle_service.list_participants())
+        if self.staff_role in self.author.roles:
+            result = self.raffle_service.list_participants()
+            if len(result) == 0:
+                return self.command_texts["noParticipants"]
+            return ", ".join(self.raffle_service.list_participants())
 
     def _cmd_pickwinner(self, args):
-        result = self.raffle_service.pick_winner()
-        if result:
-            return self.command_texts["raffleWinner"].format(result)
-        else:
-            return self.command_texts["noWinners"]
+        if self.staff_role in self.author.roles:
+            result = self.raffle_service.pick_winner()
+            if result:
+                return self.command_texts["raffleWinner"].format(result)
+            else:
+                return self.command_texts["noWinners"]
 
     def _cmd_random(self, args):
-        return self.util_service.create_random_laugh()
+        if self.verified_role in self.author.roles:
+            return self.util_service.create_random_laugh()
 
     def _cmd_purge(self, args):
-        if len(args) == 1 and args[0].isnumeric():
-            no_of_msgs_to_delete = int(args[0])
-            self.discord_service.purge_messages(self.channel, no_of_msgs_to_delete, self.message_content, self.author)
-            return None
-        else:
-            return self.get_wrong_command_usage("badPurgeCommand")
+        if self.staff_role in self.author.roles:
+            if len(args) == 1 and args[0].isnumeric():
+                no_of_msgs_to_delete = int(args[0])
+                self.discord_service.purge_messages(self.channel, no_of_msgs_to_delete, self.message_content, self.author)
+                return None
+            else:
+                return self.get_wrong_command_usage("badPurgeCommand")
 
     def _cmd_msg(self, args):
-        if len(args[0]) > 1:
+        if len(args[0]) > 1 and self.staff_role in self.author.roles:
             self.discord_service.create_bot_message(args, self.author)
             return None
         else:
             return self.get_wrong_command_usage("badMsgCommand")
 
     def _cmd_riotduyuru(self, args):
-        asyncio.get_event_loop().create_task(self.discord_service.give_role(self.guild, self.author, self.settings["board_announcements_role"]))
-        return self.command_texts["addedAnnouncementsRole"].format(self.settings["board_announcements_channel"])
+        if self.verified_role in self.author.roles:
+            asyncio.get_event_loop().create_task(self.discord_service.give_role(self.guild, self.author, self.settings["board_announcements_role"]))
+            return self.command_texts["addedAnnouncementsRole"].format(self.settings["board_announcements_channel"])
 
     def _cmd_destek(self, args):
         return "https://support.riotgames.com/hc/tr"
 
     def _cmd_doan(self, args):
-        return "gel vs, tüm güçle alırım seni! item al gel full para dimi gel!  - doğan, 2019 https://www.youtube.com/watch?v=eoUn5toyZvY"
+        if self.verified_role in self.author.roles:
+            return "gel vs, tüm güçle alırım seni! item al gel full para dimi gel!  - doğan, 2019 https://www.youtube.com/watch?v=eoUn5toyZvY"
 
     def _cmd_onayyardim(self, args):
-        return "\n\n".join([self.command_texts["verificationSteps"], self.command_texts["verificationPossibleError"]])
+        if self.staff_role in self.author.roles:
+            return "\n\n".join([self.command_texts["verificationSteps"], self.command_texts["verificationPossibleError"]])
 
     def _cmd_verify(self, args):
         if len(args) == 0:
             return self.get_wrong_command_usage("badVerificationCommand")
 
         summoner_name = " ".join(args)
-        self.loop.create_task(self.verification_service.wait_and_verify(self.channel, self.author, summoner_name))
+        self.loop.create_task(self.verification_service.wait_and_verify(self.guild, self.author, summoner_name))
 
     def get_wrong_command_usage(self, which):
         return self.command_texts["correctUsage"] + self.command_texts[which]
