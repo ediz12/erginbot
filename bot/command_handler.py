@@ -39,7 +39,7 @@ class CommandHandler(object):
         self.banned_role = self.discord_service.get_role_id(self.settings["guild_name"], self.settings["banned_role"])
         self.verified_role = self.discord_service.get_role_id(self.settings["guild_name"], self.settings["verified_role"])
 
-        if self.banned_role in self.author.roles:
+        if (self.guild is not None) and self.banned_role in self.author.roles:
             return
 
         if self.message_content.startswith(self.settings["prefix"]):
